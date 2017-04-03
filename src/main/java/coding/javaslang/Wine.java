@@ -12,9 +12,9 @@ import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
-import javaslang.API.*;
-import javaslang.Patterns.*;
+import static javaslang.API.*;
 import static javaslang.Predicates.*;
+import static javaslang.Patterns.*;
 
 @SuppressWarnings("Duplicates")
 public class Wine {
