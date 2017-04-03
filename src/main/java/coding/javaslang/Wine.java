@@ -11,7 +11,10 @@ import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
-import java.util.stream.IntStream;
+
+import javaslang.API.*;
+import javaslang.Patterns.*;
+import static javaslang.Predicates.*;
 
 @SuppressWarnings("Duplicates")
 public class Wine {
@@ -98,17 +101,6 @@ public class Wine {
         }
     }};
 
-    // Lazy + collection utils Map.ofEntries + List.rangeClosed
-    private static Map<String, List<String>> localWinesByCountry = new HashMap<String, List<String>>() {{
-        IntStream.rangeClosed(1, 11).mapToObj(i -> "country-" + i + ".csv").forEach(filename -> {
-            List<List<String>> lines = CSV.readCsvJava(filename);
-            List<String> ids = lines.stream().map(parts -> {
-                return parts.get(1);
-            }).collect(Collectors.toList());
-            put(lines.get(0).get(1), ids);
-        });
-    }};
-
     public static JsResult<Wine> fromJson(JsValue value) {
         try {
             return JsResult.success(
@@ -141,6 +133,39 @@ public class Wine {
                 .filter(opt -> opt.isPresent())
                 .map(opt -> opt.get())
                 .collect(Collectors.toList());
+    }
+
+    public static void displayLocalTestWines() {
+        List<String> ids = new ArrayList<>(testIds);
+        ids.remove("wineries-ausone-wines-saint-emilion-1er-grand-cru-class-1995");
+        ids.add("aa");
+        ids.add("bb");
+        ids.add("cc");
+        System.out.println(
+                testIds
+                        .stream()
+                        .map(id -> localFindById(id))
+                        .filter(opt -> opt.isPresent())
+                        .map(opt -> opt.get())
+                        .map(wine -> wine.toString())
+                        .collect(Collectors.joining("\n"))
+        );
+    }
+
+    public static CompletableFuture<Response> httpGet(String url) {
+        // Promise
+        CompletableFuture<Response> future = new CompletableFuture<>();
+        okHttpClient.newCall(new Request.Builder().url(url).build()).enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                future.completeExceptionally(e);
+            }
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                future.complete(response);
+            }
+        });
+        return future;
     }
 
     public static CompletableFuture<Optional<Wine>> findById(String id) {
@@ -185,38 +210,5 @@ public class Wine {
                     .map(opt -> opt.get())
                     .collect(Collectors.toList());
         });
-    }
-
-    public static CompletableFuture<Response> httpGet(String url) {
-        // Promise
-        CompletableFuture<Response> future = new CompletableFuture<>();
-        okHttpClient.newCall(new Request.Builder().url(url).build()).enqueue(new Callback() {
-            @Override
-            public void onFailure(Call call, IOException e) {
-                future.completeExceptionally(e);
-            }
-            @Override
-            public void onResponse(Call call, Response response) throws IOException {
-                future.complete(response);
-            }
-        });
-        return future;
-    }
-
-    public static void displayLocalTestWines() {
-        List<String> ids = new ArrayList<>(testIds);
-        ids.remove("wineries-ausone-wines-saint-emilion-1er-grand-cru-class-1995");
-        ids.add("aa");
-        ids.add("bb");
-        ids.add("cc");
-        System.out.println(
-            testIds
-                .stream()
-                .map(id -> localFindById(id))
-                .filter(opt -> opt.isPresent())
-                .map(opt -> opt.get())
-                .map(wine -> wine.toString())
-                .collect(Collectors.joining("\n"))
-        );
     }
 }
