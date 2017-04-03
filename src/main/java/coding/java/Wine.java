@@ -80,7 +80,7 @@ public class Wine {
     // Lazy + collection utils List.of
     private static List<String> localIds = new ArrayList<String>() {{
         addAll(
-                CSV.readCsvJava("wines")
+                CSV.readCsvJava("wines.csv")
                         .stream()
                         .map(parts -> parts.get(0))
                         .collect(Collectors.toList())
@@ -89,7 +89,7 @@ public class Wine {
 
     // Lazy + collection utils Map.ofEntries + tuples
     private static Map<String, Wine> wines = new HashMap<String, Wine>() {{
-        for (Wine wine : CSV.readCsvJava("wines")
+        for (Wine wine : CSV.readCsvJava("wines.csv")
                 .stream()
                 .map(parts -> new Wine(parts.get(0), parts.get(1), parts.get(2), parts.get(3), parts.get(4)))
                 .collect(Collectors.toList())) {

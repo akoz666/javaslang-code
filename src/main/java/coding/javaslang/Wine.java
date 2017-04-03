@@ -81,7 +81,7 @@ public class Wine {
     // Lazy + collection utils List.of
     private static List<String> localIds = new ArrayList<String>() {{
         addAll(
-                CSV.readCsvJava("wines")
+                CSV.readCsvJava("wines.csv")
                         .stream()
                         .map(parts -> parts.get(0))
                         .collect(Collectors.toList())
@@ -89,10 +89,10 @@ public class Wine {
     }};
 
     // Lazy + collection utils Map.ofEntries + tuples
-    private static Map<String, coding.java.Wine> wines = new HashMap<String, coding.java.Wine>() {{
-        for (coding.java.Wine wine : CSV.readCsvJava("wines")
+    private static Map<String, Wine> wines = new HashMap<String, Wine>() {{
+        for (Wine wine : CSV.readCsvJava("wines.csv")
                 .stream()
-                .map(parts -> new coding.java.Wine(parts.get(0), parts.get(1), parts.get(2), parts.get(3), parts.get(4)))
+                .map(parts -> new Wine(parts.get(0), parts.get(1), parts.get(2), parts.get(3), parts.get(4)))
                 .collect(Collectors.toList())) {
             put(wine.id, wine);
         }
@@ -109,10 +109,10 @@ public class Wine {
         });
     }};
 
-    public static JsResult<coding.java.Wine> fromJson(JsValue value) {
+    public static JsResult<Wine> fromJson(JsValue value) {
         try {
             return JsResult.success(
-                    new coding.java.Wine(
+                    new Wine(
                             value.field("id").asOptString().getOrElse("--"),
                             value.field("name").asOptString().getOrElse("--"),
                             value.field("year").asOptString().getOrElse("--"),
@@ -128,11 +128,11 @@ public class Wine {
     }
 
     // use option from map
-    public static Optional<coding.java.Wine> localFindById(String id) {
+    public static Optional<Wine> localFindById(String id) {
         return Optional.ofNullable(wines.get(id));
     }
 
-    public static List<coding.java.Wine> localFindAllById(List<String> ids) {
+    public static List<Wine> localFindAllById(List<String> ids) {
         // list.stream().map(...).collect(Collectors.toList())
         // option flatmap
         return ids
@@ -143,7 +143,7 @@ public class Wine {
                 .collect(Collectors.toList());
     }
 
-    public static CompletableFuture<Optional<coding.java.Wine>> findById(String id) {
+    public static CompletableFuture<Optional<Wine>> findById(String id) {
         return httpGet(ES.esUrl("/wines/wine/" + id)).thenCompose(response -> {
             // filter
             if (response.code() == 200) {
@@ -168,9 +168,9 @@ public class Wine {
         });
     }
 
-    public static CompletableFuture<List<coding.java.Wine>> findAllById(List<String> ids) {
+    public static CompletableFuture<List<Wine>> findAllById(List<String> ids) {
         // Future.sequence
-        List<CompletableFuture<Optional<coding.java.Wine>>> futureWines = ids.stream().map(id -> findById(id)).collect(Collectors.toList());
+        List<CompletableFuture<Optional<Wine>>> futureWines = ids.stream().map(id -> findById(id)).collect(Collectors.toList());
         return CompletableFuture.allOf(futureWines.toArray(new CompletableFuture<?>[futureWines.size()])).thenApply(empty -> {
             return futureWines
                     .stream()
