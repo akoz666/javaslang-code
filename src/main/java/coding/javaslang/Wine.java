@@ -89,7 +89,7 @@ public class Wine {
     }};
 
     // Lazy + collection utils Map.ofEntries + tuples
-    private static Map<String, Wine> wines = new HashMap<String, Wine>() {{
+    private static Map<String, Wine> localWines = new HashMap<String, Wine>() {{
         for (Wine wine : CSV.readCsvJava("wines.csv")
                 .stream()
                 .map(parts -> new Wine(parts.get(0), parts.get(1), parts.get(2), parts.get(3), parts.get(4)))
@@ -99,7 +99,7 @@ public class Wine {
     }};
 
     // Lazy + collection utils Map.ofEntries + List.rangeClosed
-    private static Map<String, List<String>> winesByCountry = new HashMap<String, List<String>>() {{
+    private static Map<String, List<String>> localWinesByCountry = new HashMap<String, List<String>>() {{
         IntStream.rangeClosed(1, 11).mapToObj(i -> "country-" + i + ".csv").forEach(filename -> {
             List<List<String>> lines = CSV.readCsvJava(filename);
             List<String> ids = lines.stream().map(parts -> {
@@ -129,7 +129,7 @@ public class Wine {
 
     // use option from map
     public static Optional<Wine> localFindById(String id) {
-        return Optional.ofNullable(wines.get(id));
+        return Optional.ofNullable(localWines.get(id));
     }
 
     public static List<Wine> localFindAllById(List<String> ids) {
