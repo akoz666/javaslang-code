@@ -1,0 +1,23 @@
+apply plugin: 'java'
+apply plugin: 'application'
+apply plugin: 'idea'
+
+repositories {
+    mavenCentral()
+    maven {
+        url 'https://raw.githubusercontent.com/mathieuancelin/json-lib-javaslang/master/repository/releases'
+    }
+}
+
+dependencies {
+    compile 'com.google.guava:guava:20.0'
+    compile 'io.javaslang:javaslang:2.0.5'
+    compile 'com.squareup.okhttp3:okhttp:3.6.0'
+    compile 'org.reactivecouchbase:json-lib-javaslang:1.0.3'
+    compile 'org.reflections:reflections:0.9.10'
+
+    testCompile 'junit:junit:4.12'
+}
+
+mainClassName = 'Main'
+
