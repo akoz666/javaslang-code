@@ -24,6 +24,42 @@ public class Wine {
     public final String country;
     public final String externalPhotoUrl;
 
+    public Wine(String id, String name, String year, String color, String region, String country, String externalPhotoUrl) {
+        this.id = id;
+        this.name = name;
+        this.year = year;
+        this.color = color;
+        this.region = region;
+        this.country = country;
+        this.externalPhotoUrl = externalPhotoUrl;
+    }
+
+    public Wine(String id, String name, String region, String year, String color) {
+        this.id = id;
+        this.name = name;
+        this.year = year;
+        this.color = color;
+        this.region = region;
+        this.country = "--";
+        this.externalPhotoUrl = "--";
+    }
+
+    public String toString() {
+        return "Wine " + toJson().pretty();
+    }
+
+    public JsValue toJson() {
+        return Json.obj()
+                .with("id", this.id)
+                .with("name", this.name)
+                .with("year", this.year)
+                .with("color", this.color)
+                .with("region", this.region)
+                .with("country", this.country)
+                .with("externalPhotoUrl", this.externalPhotoUrl);
+    }
+
+
     private static OkHttpClient okHttpClient = new OkHttpClient();
 
     // collection utils List.of
@@ -72,41 +108,6 @@ public class Wine {
             put(lines.get(0).get(1), ids);
         });
     }};
-
-    public Wine(String id, String name, String year, String color, String region, String country, String externalPhotoUrl) {
-        this.id = id;
-        this.name = name;
-        this.year = year;
-        this.color = color;
-        this.region = region;
-        this.country = country;
-        this.externalPhotoUrl = externalPhotoUrl;
-    }
-
-    public Wine(String id, String name, String region, String year, String color) {
-        this.id = id;
-        this.name = name;
-        this.year = year;
-        this.color = color;
-        this.region = region;
-        this.country = "--";
-        this.externalPhotoUrl = "--";
-    }
-
-    public String toString() {
-        return "Wine " + toJson().pretty();
-    }
-
-    public JsValue toJson() {
-        return Json.obj()
-                .with("id", this.id)
-                .with("name", this.name)
-                .with("year", this.year)
-                .with("color", this.color)
-                .with("region", this.region)
-                .with("country", this.country)
-                .with("externalPhotoUrl", this.externalPhotoUrl);
-    }
 
     public static JsResult<coding.java.Wine> fromJson(JsValue value) {
         try {

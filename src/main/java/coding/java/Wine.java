@@ -13,6 +13,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+@SuppressWarnings("Duplicates")
 public class Wine {
 
     public final String id;
@@ -22,55 +23,6 @@ public class Wine {
     public final String region;
     public final String country;
     public final String externalPhotoUrl;
-
-    private static OkHttpClient okHttpClient = new OkHttpClient();
-
-    // collection utils List.of
-    public static List<String> testIds = new ArrayList<String>() {{
-        add("wineries-ausone-wines-saint-emilion-1er-grand-cru-class-1995");
-        add("wineries-henri-boillot-wines-clos-de-la-mouchre-monopole-puligny-montrachet-1er-cru-2012");
-        add("wineries-chateau-magdelaine-wines-saint-milion-1er-grand-cru-class-2010");
-        add("wineries-deutz-wines-amour-de-deutz-champagne-brut-millesimi-2002");
-        add("wineries-suduiraut-wines-sauternes-1er-cru-class-2001");
-        add("wineries-la-mission-haut-brion-wines-pessac-leognan-cru-class-des-graves-1999");
-        add("wineries-chateau-clinet-wines-1196580-pomerol-2005");
-        add("wineries-paul-jaboulet-aine-1387-wines-la-chapelle-hermitage-1990");
-        add("wineries-tertre-roteboeuf-wines-saint-milion-grand-cru-2005");
-        add("wineries-e-guigal-wines-cte-rtie-la-landonne-2010");
-        add("wineries-haut-brion-wines-graves-premier-grand-cru-class-1959");
-        add("wineries-armand-rousseau-wines-chambertin-grand-cru-2002");
-    }};
-
-    // Lazy + collection utils List.of
-    private static List<String> localIds = new ArrayList<String>() {{
-        addAll(
-            CSV.readCsvJava("wines")
-                .stream()
-                .map(parts -> parts.get(0))
-                .collect(Collectors.toList())
-        );
-    }};
-
-    // Lazy + collection utils Map.ofEntries + tuples
-    private static Map<String, Wine> wines = new HashMap<String, Wine>() {{
-        for (Wine wine : CSV.readCsvJava("wines")
-            .stream()
-            .map(parts -> new Wine(parts.get(0), parts.get(1), parts.get(2), parts.get(3), parts.get(4)))
-            .collect(Collectors.toList())) {
-                put(wine.id, wine);
-        }
-    }};
-
-    // Lazy + collection utils Map.ofEntries + List.rangeClosed
-    private static Map<String, List<String>> winesByCountry = new HashMap<String, List<String>>() {{
-        IntStream.rangeClosed(1, 11).mapToObj(i -> "country-" + i + ".csv").forEach(filename -> {
-            List<List<String>> lines = CSV.readCsvJava(filename);
-            List<String> ids = lines.stream().map(parts -> {
-               return parts.get(1);
-            }).collect(Collectors.toList());
-            put(lines.get(0).get(1), ids);
-        });
-    }};
 
     public Wine(String id, String name, String year, String color, String region, String country, String externalPhotoUrl) {
         this.id = id;
@@ -106,6 +58,55 @@ public class Wine {
             .with("country", this.country)
             .with("externalPhotoUrl", this.externalPhotoUrl);
     }
+
+    private static OkHttpClient okHttpClient = new OkHttpClient();
+
+    // collection utils List.of
+    public static List<String> testIds = new ArrayList<String>() {{
+        add("wineries-ausone-wines-saint-emilion-1er-grand-cru-class-1995");
+        add("wineries-henri-boillot-wines-clos-de-la-mouchre-monopole-puligny-montrachet-1er-cru-2012");
+        add("wineries-chateau-magdelaine-wines-saint-milion-1er-grand-cru-class-2010");
+        add("wineries-deutz-wines-amour-de-deutz-champagne-brut-millesimi-2002");
+        add("wineries-suduiraut-wines-sauternes-1er-cru-class-2001");
+        add("wineries-la-mission-haut-brion-wines-pessac-leognan-cru-class-des-graves-1999");
+        add("wineries-chateau-clinet-wines-1196580-pomerol-2005");
+        add("wineries-paul-jaboulet-aine-1387-wines-la-chapelle-hermitage-1990");
+        add("wineries-tertre-roteboeuf-wines-saint-milion-grand-cru-2005");
+        add("wineries-e-guigal-wines-cte-rtie-la-landonne-2010");
+        add("wineries-haut-brion-wines-graves-premier-grand-cru-class-1959");
+        add("wineries-armand-rousseau-wines-chambertin-grand-cru-2002");
+    }};
+
+    // Lazy + collection utils List.of
+    private static List<String> localIds = new ArrayList<String>() {{
+        addAll(
+                CSV.readCsvJava("wines")
+                        .stream()
+                        .map(parts -> parts.get(0))
+                        .collect(Collectors.toList())
+        );
+    }};
+
+    // Lazy + collection utils Map.ofEntries + tuples
+    private static Map<String, Wine> wines = new HashMap<String, Wine>() {{
+        for (Wine wine : CSV.readCsvJava("wines")
+                .stream()
+                .map(parts -> new Wine(parts.get(0), parts.get(1), parts.get(2), parts.get(3), parts.get(4)))
+                .collect(Collectors.toList())) {
+            put(wine.id, wine);
+        }
+    }};
+
+    // Lazy + collection utils Map.ofEntries + List.rangeClosed
+    private static Map<String, List<String>> winesByCountry = new HashMap<String, List<String>>() {{
+        IntStream.rangeClosed(1, 11).mapToObj(i -> "country-" + i + ".csv").forEach(filename -> {
+            List<List<String>> lines = CSV.readCsvJava(filename);
+            List<String> ids = lines.stream().map(parts -> {
+                return parts.get(1);
+            }).collect(Collectors.toList());
+            put(lines.get(0).get(1), ids);
+        });
+    }};
 
     public static JsResult<Wine> fromJson(JsValue value) {
         try {
