@@ -62,7 +62,6 @@ public class Wine {
                 .with("externalPhotoUrl", this.externalPhotoUrl);
     }
 
-
     private static OkHttpClient okHttpClient = new OkHttpClient();
 
     // collection utils List.of
