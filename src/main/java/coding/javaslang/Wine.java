@@ -3,12 +3,15 @@ package coding.javaslang;
 import okhttp3.*;
 import org.reactivecouchbase.json.JsValue;
 import org.reactivecouchbase.json.Json;
-import org.reactivecouchbase.json.mapping.JsResult;
 import utils.CSV;
 import utils.ES;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.Map;
+import java.util.HashMap;
+import java.util.List;
+import java.util.ArrayList;
+import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
@@ -100,21 +103,19 @@ public class Wine {
         }
     }};
 
-    public static JsResult<Wine> fromJson(JsValue value) {
+    public static Wine fromJson(JsValue value) {
         try {
-            return JsResult.success(
-                    new Wine(
-                            value.field("id").asOptString().getOrElse("--"),
-                            value.field("name").asOptString().getOrElse("--"),
-                            value.field("year").asOptString().getOrElse("--"),
-                            value.field("color").asOptString().getOrElse("--"),
-                            value.field("region").asOptString().getOrElse("--"),
-                            value.field("country").asOptString().getOrElse("--"),
-                            value.field("externalPhotoUrl").asOptString().getOrElse("--")
-                    )
+            return new Wine(
+                value.field("id").asOptString().getOrElse("--"),
+                value.field("name").asOptString().getOrElse("--"),
+                value.field("year").asOptString().getOrElse("--"),
+                value.field("color").asOptString().getOrElse("--"),
+                value.field("region").asOptString().getOrElse("--"),
+                value.field("country").asOptString().getOrElse("--"),
+                value.field("externalPhotoUrl").asOptString().getOrElse("--")
             );
         } catch (Exception e) {
-            return JsResult.error(e);
+            throw new RuntimeException(e);
         }
     }
 
@@ -141,13 +142,13 @@ public class Wine {
         ids.add("bb");
         ids.add("cc");
         System.out.println(
-                testIds
-                        .stream()
-                        .map(id -> localFindById(id))
-                        .filter(opt -> opt.isPresent())
-                        .map(opt -> opt.get())
-                        .map(wine -> wine.toString())
-                        .collect(Collectors.joining("\n"))
+            testIds
+                .stream()
+                .map(id -> localFindById(id))
+                .filter(opt -> opt.isPresent())
+                .map(opt -> opt.get())
+                .map(wine -> wine.toString())
+                .collect(Collectors.joining("\n"))
         );
     }
 
@@ -185,7 +186,7 @@ public class Wine {
                 String respBody = response.body().string();
                 JsValue body = Json.parse(respBody);
                 JsValue jsonWine = body.field("_source").asObject().add(Json.obj().with("id", body.field("_id").asString()));
-                return Optional.ofNullable(fromJson(jsonWine).getValueOrNull());
+                return Optional.ofNullable(fromJson(jsonWine));
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
