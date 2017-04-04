@@ -83,16 +83,6 @@ public class Wine {
         add("wineries-armand-rousseau-wines-chambertin-grand-cru-2002");
     }};
 
-    // Lazy + collection utils List.of
-    private static List<String> localIds = new ArrayList<String>() {{
-        addAll(
-                CSV.readCsvJava("wines.csv")
-                        .stream()
-                        .map(parts -> parts.get(0))
-                        .collect(Collectors.toList())
-        );
-    }};
-
     // Lazy + collection utils Map.ofEntries + tuples
     private static Map<String, Wine> localWines = new HashMap<String, Wine>() {{
         for (Wine wine : CSV.readCsvJava("wines.csv")
