@@ -3,7 +3,6 @@ package coding.java;
 import okhttp3.*;
 import org.reactivecouchbase.json.JsValue;
 import org.reactivecouchbase.json.Json;
-import org.reactivecouchbase.json.mapping.JsResult;
 import utils.CSV;
 import utils.ES;
 
@@ -16,7 +15,7 @@ import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
-@SuppressWarnings("Duplicates")
+@SuppressWarnings(value = { "Duplicates", "unchecked" })
 public class Wine {
 
     public final String id;

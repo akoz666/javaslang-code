@@ -19,7 +19,7 @@ import static javaslang.API.*;
 import static javaslang.Predicates.*;
 import static javaslang.Patterns.*;
 
-@SuppressWarnings("Duplicates")
+@SuppressWarnings(value = { "Duplicates", "unchecked" })
 public class Wine {
 
     public final String id;
